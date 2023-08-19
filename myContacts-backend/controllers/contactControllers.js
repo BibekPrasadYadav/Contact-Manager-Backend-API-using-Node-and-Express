@@ -1,10 +1,11 @@
 //npm install express-async-handler
 //No need to write try catch block to handle error once this package is installed and used
 const asyncHandler=require('express-async-handler')
+const Contact=require("../models/contactModel")
 
 const getAllContacts = asyncHandler(async (req, res) => {
-  res.status(200).json({ message: "Get All Contacts" });
-
+  const contacts=await Contact.find();
+  res.status(200).json(contacts);
 });
 
 const getContactById =asyncHandler(async (req, res) => {
@@ -13,12 +14,17 @@ const getContactById =asyncHandler(async (req, res) => {
 
 const createContact =asyncHandler(async (req, res) => {
     console.log(req.body)
-    const {name}=req.body
-    if(!name){
+    const {name,email,phone}=req.body
+    if(!name || !phone || !email){
         res.status(400);
         throw new Error("Name field is mandatory")
     }
-  res.status(201).json({ message: `Add Contact` });
+    const contact=await Contact.create({
+      name,
+      email,
+      phone
+    })
+  res.status(201).json(contact);
 });
 
 const updateContact =asyncHandler(async (req, res) => {
